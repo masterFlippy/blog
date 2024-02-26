@@ -143,7 +143,7 @@ export class Deployment extends Construct {
 
 ![Alt](img/deployment.png)
 
-We are creating this Deployment file to follow AWS [best practice](https://docs.aws.amazon.com/cdk/v2/guide/best-practices.html) that tells us to build a Constructs that we can re-use.
+We are creating this Deployment file to follow AWS [best practice](https://docs.aws.amazon.com/cdk/v2/guide/best-practices.html) that tells us to build constructs that we can re-use.
 
 ### Calling our Deployment class from our main cdk file
 
