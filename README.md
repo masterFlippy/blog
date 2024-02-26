@@ -67,7 +67,7 @@ The next step will be to initiate our CDK configuration.
 
 ### Configure CDK
 
-First things first. We want to specify a out directory to where the compiled CDK project will be saved. This is to gather the compiled files in a folder, instead of them being mixed with all the other files.
+First things first. We want to specify an out directory where the compiled CDK project will be saved. This is to gather the compiled files in a folder, instead of them being mixed with all the other files.
 
 - Inside the cdk folder we need to modify the tsconfig.json with this: `"outDir": "cdk_build"`
 
