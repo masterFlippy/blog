@@ -8,6 +8,10 @@ In this simple guide, I'll show you how to use AWS CDK to deploy an AppSync API 
 
 Whether you're new to GraphQL or looking for a smoother deployment process, this guide will walk you through deploying a GraphQL API using AWS CDK.
 
+What we want to achieve in the end:
+
+![Alt](img/diagram.png)
+
 ## GraphQL
 
 GraphQL allows clients to request only the data they need, in a format that matches their needs, minimizing the amount of data transferred over the network. Unlike traditional REST APIs where clients are dependent on predefined endpoints and responses, GraphQL gives clients the power and control to specify the structure of the data they require, enabling more efficient and flexible communication between clients and servers.
@@ -606,3 +610,5 @@ export async function getUser(id: string, dynamo: AWS.DynamoDB.DocumentClient) {
   - Run `cdk bootstrap` to prepare your environment
   - Run `cdk synth` to test your configuration and preview the CloudFormation template to be deployed
   - Run `cdk deploy` to deploy the template to AWS. (You will get a question if you want to deploy. Type y to approve)
+
+### Step 7: Test
