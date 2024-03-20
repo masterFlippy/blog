@@ -4,7 +4,6 @@ import { DynamoDB } from "aws-sdk";
 
 const dynamo = new DynamoDB.DocumentClient();
 const userTable: string = process.env.USER_TABLE!;
-
 interface IUsersEvent {
   identity: {
     cognitoIdentityId: string;
@@ -31,7 +30,7 @@ export const handler: Handler = async (event: IUsersEvent) => {
     };
     const users = await dynamo.scan(params).promise();
 
-    return users;
+    return users.Items;
   } catch (error) {
     return {
       statusCode: 500,

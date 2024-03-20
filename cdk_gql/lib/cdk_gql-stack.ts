@@ -46,7 +46,7 @@ export class CdkGqlStack extends cdk.Stack {
         entry: path.join(__dirname, `/../lambdas/updateUser/index.ts`),
         handler: "handler",
         environment: {
-          BOOKING_TABLE: userTable.tableName,
+          USER_TABLE: userTable.tableName,
         },
       }
     );
@@ -97,7 +97,7 @@ export class CdkGqlStack extends cdk.Stack {
       }`),
     });
 
-    userTable.grantReadData(getUsersLambda);
+    userTable.grantReadWriteData(getUsersLambda);
     userTable.grantReadWriteData(updateUserLambda);
 
     new cdk.CfnOutput(this, "GraphQLAPIURL", {

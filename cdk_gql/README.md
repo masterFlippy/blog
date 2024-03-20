@@ -210,7 +210,7 @@ export class CdkGqlStack extends cdk.Stack {
         entry: path.join(__dirname, `/../lambdas/updateUser/index.ts`),
         handler: "handler",
         environment: {
-          BOOKING_TABLE: userTable.tableName,
+          USER_TABLE: userTable.tableName,
         },
       }
     );
@@ -261,7 +261,7 @@ export class CdkGqlStack extends cdk.Stack {
       }`),
     });
 
-    userTable.grantReadData(getUsersLambda);
+    userTable.grantReadWriteData(getUsersLambda);
     userTable.grantReadWriteData(updateUserLambda);
 
     new cdk.CfnOutput(this, "GraphQLAPIURL", {
@@ -374,7 +374,7 @@ export const handler: Handler = async (event: IUsersEvent) => {
     const users = await dynamo.scan(params).promise();
 
     // Returning the users
-    return users;
+    return users.items;
   } catch (error) {
     // Returning an error if one was caught.
     return {
@@ -612,6 +612,16 @@ export async function getUser(id: string, dynamo: AWS.DynamoDB.DocumentClient) {
   - Run `cdk deploy` to deploy the template to AWS. (You will get a question if you want to deploy. Type y to approve)
 
 ### Step 7: Test
+
+To test your newly created GraphQL API:
+
+- Head over to the AWS console and navigate to AppSync
+- Click on your API
+- Click Run a Query
+- You will se your different mutations and your query
+- Select the create one to create your first user:
+
+![Alt](img/test.png)
 
 ## Deep Dive
 

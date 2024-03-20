@@ -13,7 +13,6 @@ import { getUser } from "../../queries";
 
 const dynamo = new DynamoDB.DocumentClient();
 const userTable: string = process.env.USER_TABLE!;
-
 export interface IUpdateUsersEvent {
   identity: {
     cognitoIdentityId: string;
@@ -71,6 +70,14 @@ async function createUser(args: ICreateUserArgs) {
   if (user.Item) {
     throw new Error("User already exists");
   }
+  console.log(
+    {
+      id: args.input.id,
+      name: args.input.name,
+      email: args.input.email,
+    },
+    userTable
+  );
 
   const item: IUser = {
     id: args.input.id,
@@ -85,10 +92,10 @@ async function createUser(args: ICreateUserArgs) {
 
   user = await getUser(args.input.id, dynamo);
 
-  // If the user for some reason does not exist after create we throw a internal error
   if (!user) {
     throw new Error(`Internal Error: User missing for id ${args.input.id}`);
   }
+
   return user.Item as IUser;
 }
 
