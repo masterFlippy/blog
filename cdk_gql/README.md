@@ -167,7 +167,7 @@ import { Construct } from "constructs";
 import * as appsync from "aws-cdk-lib/aws-appsync";
 import { AttributeType, Table } from "aws-cdk-lib/aws-dynamodb";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
-import { FunctionUrlAuthType, Runtime } from "aws-cdk-lib/aws-lambda";
+import { Runtime } from "aws-cdk-lib/aws-lambda";
 import path = require("path");
 
 export class CdkGqlStack extends cdk.Stack {
@@ -183,9 +183,9 @@ export class CdkGqlStack extends cdk.Stack {
       partitionKey: { name: "id", type: AttributeType.STRING },
     });
 
-    const getUsersLambda = new NodejsFunction(this, "getBookingLambdaHandler", {
+    const getUsersLambda = new NodejsFunction(this, "getUsersLambdaHandler", {
       runtime: Runtime.NODEJS_20_X,
-      entry: path.join(__dirname, `/../lambdas/getBookings/index.ts`),
+      entry: path.join(__dirname, `/../lambdas/getUsers/index.ts`),
       handler: "handler",
       environment: {
         USER_TABLE: userTable.tableName,
@@ -207,7 +207,7 @@ export class CdkGqlStack extends cdk.Stack {
       "updateUserLambdaHandler",
       {
         runtime: Runtime.NODEJS_20_X,
-        entry: path.join(__dirname, `/../lambdas/updateBooking/index.ts`),
+        entry: path.join(__dirname, `/../lambdas/updateUser/index.ts`),
         handler: "handler",
         environment: {
           BOOKING_TABLE: userTable.tableName,
@@ -612,3 +612,7 @@ export async function getUser(id: string, dynamo: AWS.DynamoDB.DocumentClient) {
   - Run `cdk deploy` to deploy the template to AWS. (You will get a question if you want to deploy. Type y to approve)
 
 ### Step 7: Test
+
+## Deep Dive
+
+## Summary
