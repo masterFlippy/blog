@@ -617,12 +617,21 @@ To test your newly created GraphQL API:
 
 - Head over to the AWS console and navigate to AppSync
 - Click on your API
-- Click Run a Query
-- You will se your different mutations and your query
-- Select the create one to create your first user:
+- Click `Run a Query`
+- You will see your different mutations and your query
+- Select the create mutation to create your first user:
 
 ![Alt](img/test.png)
 
 ## Deep Dive
 
+If you found this interesting and want to learn more. I have a few links prepared for you.
+
+- If you are not familiar with CDK visit the [CDK documentation](https://docs.aws.amazon.com/cdk/v2/guide/home.html) and browse through it.
+- If you want to learn more about GraphQL. [Here](https://graphql.org/learn/) you have the docs
+- If you are looking for a quicker way to grasp the concept, you can check this video out about CDK: [CDK intro](https://www.youtube.com/watch?v=nlb8yo7SZ2I)
+- If you want another hands-on tutorial in CDK. Have a look at this official AWS tutorial: [CDK tutorial](https://aws.amazon.com/getting-started/guides/setup-cdk/?ref=gsrchandson)
+
 ## Summary
+
+I find GraphQL to be a fantastic tool for building APIs due to its efficiency and flexibility in data retrieval. When combined with the CDK, the development experience becomes even more enjoyable. The CDK's ability to provision and manage cloud resources programmatically aligns seamlessly with GraphQL's schema-centric approach, making the entire development process smooth and enjoyable.
