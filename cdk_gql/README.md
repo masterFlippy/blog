@@ -417,7 +417,7 @@ export interface IUpdateUsersEvent {
   };
   // Since the arguments can be create args, update args or delete args we are using a type that can be all three.
   arguments: TArgs;
-  // If the operation is
+  // If the operation is create, update or delete
   operation: EOperation;
 }
 
@@ -495,13 +495,20 @@ async function createUser(args: ICreateUserArgs) {
   // Adding the user
   await dynamo.put(params).promise();
 
+  user = await getUser(args.input.id, dynamo);
+
+  // If the user for some reason does not exist after create we throw a internal error
+  if (!user) {
+    throw new Error(`Internal Error: User missing for id ${args.input.id}`);
+  }
+
   // returning the user
-  return item;
+  return user.Item as IUser;
 }
 
 // Function to update a user
 async function updateUser(args: IUpdateUserArgs) {
-  // This function is reused to many times so it is defined in a different file and then re-used
+// This function is reused to many times so it is defined in a different file and then re-used
   let user = await getUser(args.input.id, dynamo);
 
 // If the user do not exist we throw an error
@@ -595,7 +602,7 @@ export async function getUser(id: string, dynamo: AWS.DynamoDB.DocumentClient) {
 
 ### Step 6: Build and deploy
 
-- From the root of the project navigate to the cdk folder -> `cd cdk`
-- Run `cdk bootstrap` to prepare your environment
-- Run `cdk synth` to test your configuration and preview the CloudFormation template to be deployed
-- Run `cdk deploy` to deploy the template to AWS. (You will get a question if you want to deploy. Type y to approve)
+- From the root of the project:
+  - Run `cdk bootstrap` to prepare your environment
+  - Run `cdk synth` to test your configuration and preview the CloudFormation template to be deployed
+  - Run `cdk deploy` to deploy the template to AWS. (You will get a question if you want to deploy. Type y to approve)

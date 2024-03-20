@@ -66,7 +66,7 @@ export const handler: Handler = async (event: IUpdateUsersEvent) => {
 };
 
 async function createUser(args: ICreateUserArgs) {
-  const user = await getUser(args.input.id, dynamo);
+  let user = await getUser(args.input.id, dynamo);
 
   if (user.Item) {
     throw new Error("User already exists");
@@ -82,7 +82,14 @@ async function createUser(args: ICreateUserArgs) {
     Item: item,
   };
   await dynamo.put(params).promise();
-  return item;
+
+  user = await getUser(args.input.id, dynamo);
+
+  // If the user for some reason does not exist after create we throw a internal error
+  if (!user) {
+    throw new Error(`Internal Error: User missing for id ${args.input.id}`);
+  }
+  return user.Item as IUser;
 }
 
 async function updateUser(args: IUpdateUserArgs) {
