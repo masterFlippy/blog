@@ -106,7 +106,7 @@ Lets have a deeper look on what this schema does:
 
 ### Step 3: Create types based of the GQL schema
 
-For the sake of simplicity we will manually create the types that we will use in our lambdas based of the GraphQL schema we just created. If you would like to automated this process I would recommend looking into [grapgql-codegen](https://the-guild.dev/graphql/codegen), which can be leveraged to generate types from your schema.
+For the sake of simplicity we will manually create the types that we will use in our lambdas based of the GraphQL schema we just created. If you would like to automate this process I would recommend looking into [grapgql-codegen](https://the-guild.dev/graphql/codegen), which can be leveraged to generate types from your schema.
 
 - Make sure you are in the root of your project.
 - Create a new file and name it to: `types.ts`
