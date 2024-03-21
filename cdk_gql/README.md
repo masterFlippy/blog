@@ -14,7 +14,23 @@ What we want to achieve in the end:
 
 ## GraphQL
 
-GraphQL allows clients to request only the data they need, in a format that matches their needs, minimizing the amount of data transferred over the network. Unlike traditional REST APIs where clients are dependent on predefined endpoints and responses, GraphQL gives clients the power and control to specify the structure of the data they require, enabling more efficient and flexible communication between clients and servers.
+GraphQL is a query language for APIs and a runtime for executing those queries. It was developed by Facebook in 2012 and later released as an open-source project in 2015. Here is why I like GraphQL and whats I think is nice about it.
+
+It is **flexible**: GraphQL allows clients to request exactly the data they need, nothing more and nothing less, by specifying the structure of the data they require in the query. This flexibility is different from traditional REST APIs where endpoints often return fixed data structures.
+
+It leverages a **\*single endpoint**: Unlike REST APIs where you typically have multiple endpoints for different resources, GraphQL APIs have a single endpoint for all data operations. This simplifies API management and reduces the number of network requests needed to fetch related data.
+
+It has a **strongly typed schema**: GraphQL APIs are built around a strongly typed schema, which serves as a contract between the client and the server. The schema defines the types of data that can be queried, including objects, enums, interfaces, and unions, as well as the operations that can be performed.
+
+It is **self explanatory**: GraphQL APIs are self-descriptive, meaning that clients can query the schema itself to discover the available types and operations.
+
+It is **efficient**: With GraphQL, clients can fetch multiple resources and their relationships in a single request, reducing over-fetching and under-fetching. This is particularly useful for frontend developers who need to optimize network requests and reduce latency in web and mobile applications.
+
+It is constantly **evolving**: GraphQL APIs support gradual schema evolution without breaking changes, thanks to the schema's versioning capabilities and the ability to deprecate fields and types. This allows APIs to evolve over time while maintaining backward compatibility with existing clients.
+
+It has a great **community**: GraphQL has a thriving community and a rich ecosystem of tools and libraries that make it easy to build, deploy, and manage GraphQL APIs. This includes libraries for server-side frameworks (e.g., Apollo Server, Express GraphQL), client-side frameworks (e.g. Apollo Client, Relay), and tools for schema management, testing, and performance monitoring.
+
+Overall, GraphQL offers a more efficient, flexible, and developer-friendly approach to building and consuming APIs compared to traditional REST APIs, making it a great choice for many modern web and mobile applications.
 
 ## Prerequisites
 
@@ -200,6 +216,13 @@ export class CdkGqlStack extends cdk.Stack {
     usersDataSource.createResolver(`getUsersLambdaResolver`, {
       typeName: "Query",
       fieldName: "getUsers",
+       requestMappingTemplate: appsync.MappingTemplate.fromString(`{
+        "version": "2017-02-28",
+        "operation": "Invoke",
+        "payload": {
+          "arguments": $util.toJson($context.arguments)
+        }
+      }`),
     });
 
     const updateUserLambda = new NodejsFunction(
@@ -227,7 +250,6 @@ export class CdkGqlStack extends cdk.Stack {
         "operation": "Invoke",
         "payload": {
           "arguments": $util.toJson($context.arguments),
-          "identity": $util.toJson($context.identity),
           "operation": "create"
         }
       }`),
@@ -241,7 +263,6 @@ export class CdkGqlStack extends cdk.Stack {
         "operation": "Invoke",
         "payload": {
           "arguments": $util.toJson($context.arguments),
-          "identity": $util.toJson($context.identity),
           "operation": "update"
         }
       }`),
@@ -255,13 +276,12 @@ export class CdkGqlStack extends cdk.Stack {
         "operation": "Invoke",
         "payload": {
           "arguments": $util.toJson($context.arguments),
-          "identity": $util.toJson($context.identity),
           "operation": "delete"
         }
       }`),
     });
 
-    userTable.grantReadWriteData(getUsersLambda);
+    userTable.grantReadData(getUsersLambda);
     userTable.grantReadWriteData(updateUserLambda);
 
     new cdk.CfnOutput(this, "GraphQLAPIURL", {
@@ -344,10 +364,6 @@ const userTable: string = process.env.USER_TABLE!;
 
 // Defining how our event will look like
 interface IUsersEvent {
-  identity: {
-    cognitoIdentityId: string;
-    cognitoIdentityAuthProvider: string;
-  };
   // Since the id can be undefined we are also defining this here
   arguments: {
     id?: string;
@@ -376,11 +392,8 @@ export const handler: Handler = async (event: IUsersEvent) => {
     // Returning the users
     return users.items;
   } catch (error) {
-    // Returning an error if one was caught.
-    return {
-      statusCode: 500,
-      body: JSON.stringify(error),
-    };
+    // Throwing an error if one was caught.
+    throw error;
   }
 };
 
@@ -415,10 +428,6 @@ const userTable: string = process.env.USER_TABLE!;
 
 // Defining how our event will look like
 export interface IUpdateUsersEvent {
-  identity: {
-    cognitoIdentityId: string;
-    cognitoIdentityAuthProvider: string;
-  };
   // Since the arguments can be create args, update args or delete args we are using a type that can be all three.
   arguments: TArgs;
   // If the operation is create, update or delete
@@ -466,10 +475,9 @@ export const handler: Handler = async (event: IUpdateUsersEvent) => {
     // Finally returning the user
     return user;
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(error),
-    };
+    // Throwing an error if one was caught
+    throw error;
+
   }
 };
 

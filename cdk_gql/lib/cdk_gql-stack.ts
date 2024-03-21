@@ -36,6 +36,13 @@ export class CdkGqlStack extends cdk.Stack {
     usersDataSource.createResolver(`getUsersLambdaResolver`, {
       typeName: "Query",
       fieldName: "getUsers",
+      requestMappingTemplate: appsync.MappingTemplate.fromString(`{
+        "version": "2017-02-28",
+        "operation": "Invoke",
+        "payload": {
+          "arguments": $util.toJson($context.arguments)
+        }
+      }`),
     });
 
     const updateUserLambda = new NodejsFunction(
@@ -63,7 +70,6 @@ export class CdkGqlStack extends cdk.Stack {
         "operation": "Invoke",
         "payload": {
           "arguments": $util.toJson($context.arguments),
-          "identity": $util.toJson($context.identity),
           "operation": "create"
         }
       }`),
@@ -77,7 +83,6 @@ export class CdkGqlStack extends cdk.Stack {
         "operation": "Invoke",
         "payload": {
           "arguments": $util.toJson($context.arguments),
-          "identity": $util.toJson($context.identity),
           "operation": "update"
         }
       }`),
@@ -91,13 +96,12 @@ export class CdkGqlStack extends cdk.Stack {
         "operation": "Invoke",
         "payload": {
           "arguments": $util.toJson($context.arguments),
-          "identity": $util.toJson($context.identity),
           "operation": "delete"
         }
       }`),
     });
 
-    userTable.grantReadWriteData(getUsersLambda);
+    userTable.grantReadData(getUsersLambda);
     userTable.grantReadWriteData(updateUserLambda);
 
     new cdk.CfnOutput(this, "GraphQLAPIURL", {

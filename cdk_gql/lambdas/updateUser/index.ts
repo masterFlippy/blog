@@ -14,10 +14,6 @@ import { getUser } from "../../queries";
 const dynamo = new DynamoDB.DocumentClient();
 const userTable: string = process.env.USER_TABLE!;
 export interface IUpdateUsersEvent {
-  identity: {
-    cognitoIdentityId: string;
-    cognitoIdentityAuthProvider: string;
-  };
   arguments: TArgs;
   operation: EOperation;
 }
@@ -57,10 +53,7 @@ export const handler: Handler = async (event: IUpdateUsersEvent) => {
     }
     return user;
   } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify(error),
-    };
+    throw error;
   }
 };
 
